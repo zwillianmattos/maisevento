@@ -1,28 +1,24 @@
 import 'package:lucid_validation/lucid_validation.dart';
-import '../models/event.dart';
+import '../domain/entities/event.dart';
 
 class EventValidator extends LucidValidator<Event> {
   EventValidator() {
-    ruleFor((event) => event.name, key: 'name')
+    ruleFor((event) => event.title, key: 'title')
         .notEmpty()
-        .maxLength(100, message: 'O título deve ter no máximo 100 caracteres');
+        .minLength(3)
+        .maxLength(100);
 
     ruleFor((event) => event.description, key: 'description')
         .notEmpty()
-        .maxLength(500,
-            message: 'A descrição deve ter no máximo 500 caracteres');
+        .maxLength(500);
 
-    ruleFor((event) => event.date, key: 'date').greaterThan(DateTime.now(),
-        message: 'A data do evento deve ser no futuro');
+    ruleFor((event) => event.date, key: 'date').must(
+        (date) => date.isAfter(DateTime.now()),
+        'Date must be in the future',
+        'date');
 
-    ruleFor((event) => event.location, key: 'location').notEmpty();
-
-    ruleFor((event) => event.capacity, key: 'capacity')
-        .greaterThan(0, message: 'A capacidade deve ser maior que zero');
-
-    ruleFor((event) => event.activities, key: 'activities').must(
-        (activities) => activities.isNotEmpty,
-        'Atividades não podem ser vazias',
-        'activities');
+    ruleFor((event) => event.location, key: 'location')
+        .notEmpty()
+        .maxLength(200);
   }
 }
